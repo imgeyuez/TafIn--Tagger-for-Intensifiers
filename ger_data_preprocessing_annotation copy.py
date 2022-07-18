@@ -25,8 +25,8 @@ for i in range(len(file_input)):
     if pattern:
         content = file_input[i].split("\t")
         used_content.append(content)
-        token = content[2]
-        sentence.append(token)
+        token_tag = content[2]
+        sentence.append(token_tag)
         
     else:
         if sentence != []:
@@ -64,32 +64,41 @@ for sentence in sentences:
     tagged_sentence = asptagger.tag_sentence(sentence)
     for index in range(len(tagged_sentence)):
         tagged_tokens.append(tagged_sentence[index])
-    #print("\n".join(["\t".join(t) for t in tagged_sentence]), "\n", sep="")
- 
+
 # print(len(used_content))
-#print(tagged_tokens)
+
 
 ##########  tokens und intensivierer in neue        ##########
 ##########  datei zum annotieren übertragen         ########## 
 
 with open("test_newdatafile.txt", "w", encoding="UTF-8-sig") as newfile:
-    for index, token in enumerate(tagged_tokens):
+    for index, token_tag in enumerate(tagged_tokens):
         # look if token is in front of an Adjective
-        if tagged_tokens[index+1][1] == "ADJD" or tagged_tokens[index+1][1] == "ADJA":
-            ifoA = 1
-        else:
-            ifoA = 0
+        try:
+            if tagged_tokens[index+1][1] == "ADJD" or tagged_tokens[index+1][1] == "ADJA":
+                ifoA = 1
+            else:
+                ifoA = 0
+        except:
+            pass
 
         # look if token is ADJD or ADJA
-        if tagged_tokens[index][1] == "ADJD":
+        if token_tag[1] == "ADJD":
             DoA = "pred"
-        elif tagged_tokens[index][1] == "ADJA":
+        elif token_tag[1] == "ADJA":
             DoA = "att"
         else:
             DoA = "None"
         
         # look, if token is an intensifier
+        if used_content[index][3] == "_":
+            itsf = 0
+        else:
+            itsf = 1
         
+        # apply to new file
+        information = str(token_tag[0]) + "\t" + str(ifoA) + "\t" + str(DoA) + "\t" + str(itsf) + "\n"
+        newfile.write(information)
 
 
 # with open("test_newdatafile.txt", "w", encoding="UTF-8-sig") as newfile:
