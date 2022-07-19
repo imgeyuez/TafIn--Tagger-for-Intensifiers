@@ -126,10 +126,10 @@ def annotated_file(tagged_tokens, used_tokens):
         someweta
     """
     # create new file to write in 
-    with open("test_on_data3.txt", "w", encoding="UTF-8-sig") as newfile:
+    with open("test_on_data5.txt", "w", encoding="UTF-8-sig") as newfile:
         # go through the list of tagged tokens
         for index, token_tag in enumerate(tagged_tokens):
-            
+            # try for: if we are at the last token
             try:
                 # look if token is in front of an predicative or attributive adjective
                 if tagged_tokens[index+1][1] == "ADJD" or tagged_tokens[index+1][1] == "ADJA":
@@ -139,19 +139,30 @@ def annotated_file(tagged_tokens, used_tokens):
             except:
                 pass
 
-            # look if token is ADJD or ADJA
-            if token_tag[1] == "ADJD":
-                DoA = "pred"
-            elif token_tag[1] == "ADJA":
-                DoA = "att"
-            else:
-                DoA = "None"
+            
+            # look if token is in front of ADJD or ADJA
+            #if token_tag[1] == "ADJD":
+            try:
+                if tagged_tokens[index+1][1] == "ADJD":
+                    DoA = "pred"
+                elif tagged_tokens[index+1][1] == "ADJA":
+                    DoA = "att"
+                else:
+                    DoA = "None"
+            except:
+                pass
             
             # look, if token is an intensifier
             if used_tokens[index][3] == "_":
                 itsf = 0
             else:
-                itsf = 1
+                # within the data are not only intensifiers of adjectives annotated
+                # therefore there is the need to select those intensifiers, that stand
+                # in front of an adjective (for explanation see paper chapter 3.2.3).
+                if tagged_tokens[index+1][1] == "ADJD" or tagged_tokens[index+1] == "ADJA":
+                    itsf = 1
+                else:
+                    itsf = 0
             
             # apply the annotations in the new file
             information = str(token_tag[0]) + "\t" + str(ifoA) + "\t" + str(DoA) + "\t" + str(itsf) + "\n"
