@@ -2,7 +2,7 @@
     This file is for the preprocessing of the data.
     Good thing is that the data is already tokenized.
     That will be helpful.
-    Results are supposed to be:D.h.:
+    Results are supposed to be:
     > PoS-Tagged Tokens
     > Splitting adjectivecompounds that were annotated as intensifiers
 
