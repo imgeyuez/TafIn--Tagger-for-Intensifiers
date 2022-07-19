@@ -1,0 +1,199 @@
+"""
+Within this file is the preparation for the biggest part of
+the annotation of the data, which is supposed to be automatic.
+Innerhalb dieser Datei wird der Großteil der Annotation, der 
+automatisch stattfinden soll, vorbereitet.
+D.h.:
+    > Einlesen der Daten
+    > PoS-Tagging der Daten
+    > Analyse folgender Merkmale:
+        > ifoA  -> in front of adjective? 1 yes, 0 no
+        > DoA   -> ADJD (prädikativ) or ADJA (attributiv)? pred ADJD, att ADJA, None if neither
+        > itsf  -> Intensifier? 1 yes, 0 no
+
+D.h.:
+    > Tokenisieren
+    > POS ergänzen 
+    > Aufsplitten von ADJD/ADJA als Komposita 
+"""
+
+import re
+from someweta import ASPTagger
+
+def readfile(filename):
+    """
+        Reads the file and saves its content within a variable.
+        One row of the data is one entry within the list file_input
+    """
+    with open(filename, encoding="UTF-8-sig") as file:
+        file_input = file.readlines()
+
+    return file_input
+
+
+def get_sentences(file_input):
+    """
+        This function will get all the rows within the data that behold
+        a token.
+    """
+
+    # list of the rows with the used tokens
+    used_tokens = []
+    # list in which one sentence will be preserved
+    sentence = []
+    # list which will contain all the sentences in form of
+    # sentences = [["Ein", "Satz", "ist", "eine", "Liste", "von", "Tokens", "."],
+    #             ["Zeitfliegen", "mögen", "einen", "Pfeil", "."]]
+    sentences = []
+
+    # go through the input from the file
+    for i in range(len(file_input)):
+        # this pattern is always at the beginning of a row that contains 
+        # the tokens and their annotation
+        # example:  113-2	8936-8941	halte	_	
+        #           113-3	8942-8944	so	Intensifier	
+        #           113-4	8945-8950	gerne	_	
+        pattern = re.search(r"[0-9]+-[0-9]+", file_input[i])
+
+        # if the pattern matches...
+        if pattern:
+            # ...split the input...
+            content = file_input[i].split("\t")
+            # ...append the row with within the list with used_tokens
+            # this will later help to get the annotations
+            used_tokens.append(content)
+            # extract the token
+            token = content[2]
+            # append the token to generate the one sentence
+            sentence.append(token)
+
+    # if the pattern does not match    
+    else:
+        # and the content is not empty
+        if sentence != []:
+            # append the generated sentence within the sentences
+            sentences.append(sentence)
+        # and generate a new list to collect the tokens for the next sentence
+        sentence = []
+
+    return used_tokens, sentences
+
+
+# das ist eigentlich effizienter, aber der letzte Satz
+# geht mir hier verloren
+"""
+    for line in file_input:
+        pattern = re.search(r"[0-9]+-[0-9]+", line)
+        if pattern:
+            line_content= line.split("\t")
+            token = line_content[2]
+            sentence.append(token)
+        else:
+            if sentence != []:
+                sentences.append(sentence)
+
+            sentence = []
+"""
+
+
+def pos_tagging(sentences):
+    """
+        This function uses the pretrained model someweta from empirist 
+        to tag the tokens which are within the sentences."""
+
+    # loads pretrained model form someweta
+    model = "german_web_social_media_2020-05-28.model"
+
+    asptagger = ASPTagger()
+    asptagger.load(model)
+
+    # list in which the tokens with their tags will be saved in
+    # form: tuple(token, tag)
+    tagged_tokens = list()
+
+    for sentence in sentences:
+        tagged_sentence = asptagger.tag_sentence(sentence)
+        for index in range(len(tagged_sentence)):
+            tagged_tokens.append(tagged_sentence[index])
+    
+    return tagged_tokens
+
+
+def annotated_file(tagged_tokens, used_tokens):
+    """
+        This function creates the new file with the automatic annotation
+        based on a previous manuel annotation and the postagging by 
+        someweta
+    """
+    # create new file to write in 
+    with open("test_on_data3.txt", "w", encoding="UTF-8-sig") as newfile:
+        # go through the list of tagged tokens
+        for index, token_tag in enumerate(tagged_tokens):
+            
+            try:
+                # look if token is in front of an predicative or attributive adjective
+                if tagged_tokens[index+1][1] == "ADJD" or tagged_tokens[index+1][1] == "ADJA":
+                    ifoA = 1
+                else:
+                    ifoA = 0
+            except:
+                pass
+
+            # look if token is ADJD or ADJA
+            if token_tag[1] == "ADJD":
+                DoA = "pred"
+            elif token_tag[1] == "ADJA":
+                DoA = "att"
+            else:
+                DoA = "None"
+            
+            # look, if token is an intensifier
+            if used_tokens[index][3] == "_":
+                itsf = 0
+            else:
+                itsf = 1
+            
+            # apply the annotations in the new file
+            information = str(token_tag[0]) + "\t" + str(ifoA) + "\t" + str(DoA) + "\t" + str(itsf) + "\n"
+            newfile.write(information)
+    
+    return newfile
+
+
+def run_script(filenames):
+    """Funktion, die alle weiteren Funktionen aufruft"""
+
+    # list for ALL the inputs
+    inputs = list()
+    
+    # collect all the input from different corpus within one
+    # list
+    for file in filenames:
+        content = readfile(file)
+        inputs.extend(content)
+
+    print("FINISHED : READ IN ALL THE DATA")
+
+    # collect all the used tokens and also generate the list with the sentences
+    used_tokens, sentences = get_sentences(inputs)
+
+    print("FINISHED : COLLECTING TOKENS")
+
+    # pos-tagging all the tokens
+    tagged_tokens = pos_tagging(sentences)
+    
+    print("FINISHED : TAGGING THE TOKENS")
+    
+    # creating the new file
+    annotated_file(tagged_tokens, used_tokens)
+
+
+    print("FINISHED : CREATE NEW FILE")
+
+"8997_blog.xml.tsv"
+
+if __name__ == "__main__":
+
+    filenames = ["8997_blog.xml.tsv", "test.tsv"]
+
+    run_script(filenames)
