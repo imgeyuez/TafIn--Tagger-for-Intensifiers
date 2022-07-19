@@ -10,11 +10,6 @@ D.h.:
         > ifoA  -> in front of adjective? 1 yes, 0 no
         > DoA   -> ADJD (prädikativ) or ADJA (attributiv)? pred ADJD, att ADJA, None if neither
         > itsf  -> Intensifier? 1 yes, 0 no
-
-D.h.:
-    > Tokenisieren
-    > POS ergänzen 
-    > Aufsplitten von ADJD/ADJA als Komposita 
 """
 
 import re
@@ -201,7 +196,6 @@ def run_script(filenames):
 
     print("FINISHED : CREATE NEW FILE")
 
-"8997_blog.xml.tsv"
 
 if __name__ == "__main__":
 
