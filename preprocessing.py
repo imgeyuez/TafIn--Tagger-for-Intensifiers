@@ -1,5 +1,5 @@
 """
-    Thit file contains the steps for preprocessing
+    This file contains the steps for preprocessing
     the data. 
     The functions are:
     readfile()              : Reading in the file
