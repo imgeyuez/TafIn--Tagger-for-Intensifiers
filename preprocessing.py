@@ -17,6 +17,113 @@ def readfile(filename):
 
     return file_input
 
+def generatesentences(file_input):
+    # is needed for the pos-tagging
+     # list which will contain all the sentences in form of
+    # sentences = [["Ein", "Satz", "ist", "eine", "Liste", "von", "Tokens", "."],
+    #             ["Zeitfliegen", "mögen", "einen", "Pfeil", "."]]
+    sentences = []
+    
+    # list in which one sentence will be preserved
+    sentence = []
+
+    data_len = len(file_input)
+    for index, token in enumerate(file_input):
+        #if index == data_len-1:
+        token_content = token.split("\t")
+
+        if token_content[0] != ".":
+            sentence.append(token_content[0])
+        else:
+            sentence.append(token_content[0])
+            sentences.append(sentence)
+            sentence = list()
+
+    return sentences
+
+def pos_tagging(file_input, sentences):
+    from someweta import ASPTagger
+    """
+        This function uses the pretrained model someweta from empirist 
+        to tag the tokens which are within the sentences.
+    """
+
+    # loads pretrained model form someweta
+    model = "german_web_social_media_2020-05-28.model"
+
+    asptagger = ASPTagger()
+    asptagger.load(model)
+
+    # list in which the tokens with their tags will be saved in
+    # form: tuple(token, tag)
+    tokens_tags = list()
+
+    for sentence in sentences:
+        tagged_sentence = asptagger.tag_sentence(sentence)
+        for index in range(len(tagged_sentence)):
+            tokens_tags.append(tagged_sentence[index])
+    
+    # adding PoS-Information to the data in a new datafile
+    new_data = list()
+
+    for index, token in enumerate(file_input):
+        content = token.split("\t")
+        pos_tag = tokens_tags[index][1]
+        content.insert(1, pos_tag)
+        new_data.append(content)
+    
+    return new_data
+
+def splitcompounds(new_data):
+
+    compounds = list()
+
+    for index, token in enumerate(new_data):
+        if token[-2] == "1":
+            if token[1] == "ADJD" or token[1] == "ADJA":
+                compounds.append([index, token])
+
+    from charsplit import Splitter
+    splitter = Splitter()
+
+    """
+        Form:
+        [(0.1740327189765392, 'Zucker', 'Süß'), (-1.5975678869950305, 'Zuck', 'Ersüß'), (-2.1849865951742626, 'Zuc', 'Kersüß'), 
+        (-3, 'Zucke', 'Rsüß')]  
+    """
+
+    # doch lieber in dictionary umwandeln?? 
+    splittet_compounds = list()
+
+    for compound in compounds:
+        # form of compound:
+        # compund = [67, ['klitzeklein', 'ADJD', '0', 'None', '1', '\n']] 
+
+        splitted_compound = splitter.split_compound(compound[1][0])
+        lexem1 = splitted_compound[0][1]
+        lexem2 = splitted_compound[0][2]
+        splittet_compounds.append([compound[1][0], [lexem1, lexem2]])
+
+    return compounds, splittet_compounds
+
+def insert_compounds(new_data, compounds, splittet_compounds):
+    compound_index = list()
+    for compound in compounds:
+        compound_index.append(compound[0])
+
+    # hier token noch einmal pos-taggen und annotationen
+    # ergänzen und dann
+    # als compound elemente einfügen 
+    # data in which compounds are splitted
+    new_new_data = list()
+
+    #print(compound_index)
+    for index, token in enumerate(new_data):
+        if index in compound_index:
+            new_new_data.append()
+        else:
+            new_new_data.append(token)
+
 def get_informations(file_input):
     """
         Maingoal of this function is to extract the specific
@@ -118,26 +225,3 @@ def test_and_train_data(featurevec, gold_lables):
 
 
     return train_features, train_lables, test_features, test_lables
-
-def pos_tagging(sentences):
-    from someweta import ASPTagger
-    """
-        This function uses the pretrained model someweta from empirist 
-        to tag the tokens which are within the sentences."""
-
-    # loads pretrained model form someweta
-    model = "german_web_social_media_2020-05-28.model"
-
-    asptagger = ASPTagger()
-    asptagger.load(model)
-
-    # list in which the tokens with their tags will be saved in
-    # form: tuple(token, tag)
-    tagged_tokens = list()
-
-    for sentence in sentences:
-        tagged_sentence = asptagger.tag_sentence(sentence)
-        for index in range(len(tagged_sentence)):
-            tagged_tokens.append(tagged_sentence[index])
-    
-    return tagged_tokens
