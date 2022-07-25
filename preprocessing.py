@@ -124,17 +124,19 @@ def insert_compounds(new_data, compounds, splittet_compounds):
     # [67, 'klitzeklein', ['Klitze', 'Klein']]]
 
     # create their pos-tag and annotation
-    index_token_tag = list()
-    compound_index = list()
+    index_token_tag = dict()
+    #compound_index = list()
+
+    list_of_fail_annotated = list()
 
     for compound in splitted_compounds:
         annot = list()
-        #print(compound[0])
-        compound_index.append(compound[0])
+        # #print(compound[0])
+        # compound_index.append(compound[0])
         tokens_tags = list()
         tagged_lexems = asptagger.tag_sentence(compound[2])
         tokens_tags.append(tagged_lexems)
-
+      
         # in tokens_tags ist dann die form:
         # [[('Schweine', 'NN'), ('Schwer', 'ADJD')]]
         #print(tokens_tags)
@@ -144,14 +146,15 @@ def insert_compounds(new_data, compounds, splittet_compounds):
         # schwer,   ADJD, 0, None, 0
 
         # will die form: [index, [[lex1, tag, ifoA, ped/att/None, itsf], [lex2, tag, ifoA, ped/att/None, itsf]]]
-        if tokens_tags[0][1][1] == "ADJD":
-            annot.append([tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "pred", "1"])
-        elif tokens_tags[1][1][1] == "ADJA":
-            annot.append([tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "att", "1"])
 
-        annot.append([tokens_tags[0][1][0], tokens_tags[0][1][1], "0", "None", "0"])
-    
-        index_token_tag.append([compound[0], annot])
+        if tokens_tags[0][1][1] == "ADJD":
+            index_token_tag[compound[0]] = [tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "pred", "1"], [tokens_tags[0][1][0], tokens_tags[0][1][1], "0", "None", "0"]
+
+        elif tokens_tags[1][1][1] == "ADJA":
+            index_token_tag[compound[0]] = [tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "att", "1"], [tokens_tags[0][1][0], tokens_tags[0][1][1], "0", "None", "0"]
+
+        else:
+            list_of_fail_annotated.append(compound)
 
     # das ist das ergebnis:
     #[[63, [['Schweine', 'NN', '1', 'pred', '1'], ['Schwer', 'ADJD', '0', 'None', '0']]], 
