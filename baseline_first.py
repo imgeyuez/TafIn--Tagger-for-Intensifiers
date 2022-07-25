@@ -3,15 +3,18 @@
     focus- and gradparticel from the someweta module itself. 
 
     Therefore the baseline is nothing but the def pos_tagging(sentences)
-    where the tokens tagged with ... will be marked as intensifiers.
+    where the tokens tagged with PTKIFG will be marked as intensifiers.
 """
 
-def baseline_first(tagged_tokens):
+def baseline_first(test_data):
+    # list for lable predictions
     y_pred = list()
-    for token_tag in enumerate(tagged_tokens):
-        #print(token_tag[1][1])
-        if token_tag[1][1] == "PTKIFG":
+    # go through each token in the data
+    for token in test_data:
+        # if it has the tag, append 1 for the lable "intensifier"
+        if token[1] == "PTKIFG":
             y_pred.append(1)
+        # else append 0 for "not intensifier"
         else:
             y_pred.append(0)
 
