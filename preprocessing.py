@@ -106,13 +106,12 @@ def splitcompounds(new_data):
 
     return compounds, splittet_compounds
 
-def insert_compounds(new_data, compounds, splittet_compounds):
-
+def insert_compounds(new_data, splitted_compounds):
+    
     # hier token noch einmal pos-taggen und annotationen
     # ergänzen und dann
     # als compound elemente einfügen 
     # data in which compounds are splitted
-    
     from someweta import ASPTagger
 
     model = "german_web_social_media_2020-05-28.model"
@@ -156,19 +155,33 @@ def insert_compounds(new_data, compounds, splittet_compounds):
         else:
             list_of_fail_annotated.append(compound)
 
-    # das ist das ergebnis:
-    #[[63, [['Schweine', 'NN', '1', 'pred', '1'], ['Schwer', 'ADJD', '0', 'None', '0']]], 
-    # [67, [['Klitze', 'NN', '1', 'pred', '1'], ['Klein', 'ADJD', '0', 'None', '0']]]]
-    
-    
-    new_new_data = list()
 
-    #print(compound_index)
+    #print(index_token_tag)
+    # das ist das ergebnis:
+
+    # {63: (['Schweine', 'NN', '1', 'pred', '1'], ['Schwer', 'ADJD', '0', 'None', '0']), 
+    # 67: (['Klitze', 'NN', '1', 'pred', '1'], ['Klein', 'ADJD', '0', 'None', '0'])}
+
+
+    new_new_data = list()
+    keys = index_token_tag.keys() 
+
     for index, token in enumerate(new_data):
-        if index in compound_index:
-            new_new_data.append()
+        # wenn der index ein Kompositum ist,
+        if index in keys:
+        # werden anstelle des Kompositums
+        # die beiden Lexeme eingetragen
+            tokens = index_token_tag.get(index)
+            new_new_data.append(tokens[0])
+            new_new_data.append(tokens[1])
+
+        # ist das Token bei dem Index kein 
+        # Kompositum, können die Daten einfach
+        # übernommen werden 
         else:
             new_new_data.append(token)
+
+    return new_new_data
 
 def get_informations(file_input):
     """
