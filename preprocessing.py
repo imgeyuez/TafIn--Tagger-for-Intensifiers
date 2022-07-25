@@ -107,14 +107,57 @@ def splitcompounds(new_data):
     return compounds, splittet_compounds
 
 def insert_compounds(new_data, compounds, splittet_compounds):
-    compound_index = list()
-    for compound in compounds:
-        compound_index.append(compound[0])
 
     # hier token noch einmal pos-taggen und annotationen
     # ergänzen und dann
     # als compound elemente einfügen 
     # data in which compounds are splitted
+    
+    from someweta import ASPTagger
+
+    model = "german_web_social_media_2020-05-28.model"
+    asptagger = ASPTagger()
+    asptagger.load(model)
+
+
+    # [[63, 'schweineschwer', ['Schweine', 'Schwer']], 
+    # [67, 'klitzeklein', ['Klitze', 'Klein']]]
+
+    # create their pos-tag and annotation
+    index_token_tag = list()
+    compound_index = list()
+
+    for compound in splitted_compounds:
+        annot = list()
+        #print(compound[0])
+        compound_index.append(compound[0])
+        tokens_tags = list()
+        tagged_lexems = asptagger.tag_sentence(compound[2])
+        tokens_tags.append(tagged_lexems)
+
+        # in tokens_tags ist dann die form:
+        # [[('Schweine', 'NN'), ('Schwer', 'ADJD')]]
+        #print(tokens_tags)
+
+        # Das will ich haben:
+        # schweine, NN, 1, pred, 1          # später müsste hier ergänzt werden, ob es sem. steigerbar ist lol
+        # schwer,   ADJD, 0, None, 0
+
+        # will die form: [index, [[lex1, tag, ifoA, ped/att/None, itsf], [lex2, tag, ifoA, ped/att/None, itsf]]]
+        if tokens_tags[0][1][1] == "ADJD":
+            annot.append([tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "pred", "1"])
+        elif tokens_tags[1][1][1] == "ADJA":
+            annot.append([tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "att", "1"])
+
+        annot.append([tokens_tags[0][1][0], tokens_tags[0][1][1], "0", "None", "0"])
+    
+        index_token_tag.append([compound[0], annot])
+
+    # das ist das ergebnis:
+    #[[63, [['Schweine', 'NN', '1', 'pred', '1'], ['Schwer', 'ADJD', '0', 'None', '0']]], 
+    # [67, [['Klitze', 'NN', '1', 'pred', '1'], ['Klein', 'ADJD', '0', 'None', '0']]]]
+    
+    
     new_new_data = list()
 
     #print(compound_index)
