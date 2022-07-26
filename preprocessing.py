@@ -3,9 +3,13 @@
     the data. 
     The functions are:
     readfile()              : Reading in the file
-    get_informations()      : Extracts the featurevec, gold_lables and sentences
-    test_and_train_data()   : Divides data into train and test data
+    generatesentences
+    train_test_data()       : Divides data into train and test data
     pos_tagging()           : PoS-tags the data
+    splitcompounds
+    insert_compounds
+    run_script
+
 """
 
 def readfile(filename):
@@ -74,36 +78,38 @@ def train_test_data(data_input, sentences):
 
     return train_data, test_data, train_sentences, test_sentences
 
-# def pos_tagging(train_sentences, test_sentences):
-#     from someweta import ASPTagger
-#     """
-#         This function uses the pretrained model someweta from empirist 
-#         to tag the tokens which are within the sentences.
-#     """
+'''
+    # def pos_tagging(train_sentences, test_sentences):
+    #     from someweta import ASPTagger
+    #     """
+    #         This function uses the pretrained model someweta from empirist 
+    #         to tag the tokens which are within the sentences.
+    #     """
 
-#     # loads pretrained model form someweta
-#     model = "german_web_social_media_2020-05-28.model"
+    #     # loads pretrained model form someweta
+    #     model = "german_web_social_media_2020-05-28.model"
 
-#     asptagger = ASPTagger()
-#     asptagger.load(model)
+    #     asptagger = ASPTagger()
+    #     asptagger.load(model)
 
-#     # list in which the tokens with their tags will be saved in
-#     # form: tuple(token, tag)
-#     train_tokens_tags = list()
+    #     # list in which the tokens with their tags will be saved in
+    #     # form: tuple(token, tag)
+    #     train_tokens_tags = list()
 
-#     for sentence in train_sentences:
-#         tagged_sentence = asptagger.tag_sentence(sentence)
-#         for index in range(len(tagged_sentence)):
-#             train_tokens_tags.append(tagged_sentence[index])
+    #     for sentence in train_sentences:
+    #         tagged_sentence = asptagger.tag_sentence(sentence)
+    #         for index in range(len(tagged_sentence)):
+    #             train_tokens_tags.append(tagged_sentence[index])
 
-#     test_tokens_tags = list()
+    #     test_tokens_tags = list()
 
-#     for sentence in test_sentences:
-#         tagged_sentence = asptagger.tag_sentence(sentence)
-#         for index in range(len(tagged_sentence)):
-#             test_tokens_tags.append(tagged_sentence[index])
+    #     for sentence in test_sentences:
+    #         tagged_sentence = asptagger.tag_sentence(sentence)
+    #         for index in range(len(tagged_sentence)):
+    #             test_tokens_tags.append(tagged_sentence[index])
 
-#     return train_tokens_tags, test_tokens_tags
+    #     return train_tokens_tags, test_tokens_tags
+'''
 
 def pos_tagging(sentences):
     from someweta import ASPTagger
@@ -130,10 +136,10 @@ def pos_tagging(sentences):
     return tokens_tags
     
 def splitcompounds(data_variable):
-
     compounds = list()
 
     for index, token in enumerate(data_variable):
+        # token = ['ganz', 'PTKIFG', '1', 'pred', '1', '\n']
         # if intensifier
         if token[-2] == "1":
             if token[1] == "ADJD" or token[1] == "ADJA":
@@ -147,7 +153,7 @@ def splitcompounds(data_variable):
         [(0.1740327189765392, 'Zucker', 'Süß'), (-1.5975678869950305, 'Zuck', 'Ersüß'), (-2.1849865951742626, 'Zuc', 'Kersüß'), 
         (-3, 'Zucke', 'Rsüß')]  
     """
-    #splitted_compounds = dict()
+
     splitted_compounds = list()
 
     for compound in compounds:
@@ -155,15 +161,18 @@ def splitcompounds(data_variable):
         # compund = [67, ['klitzeklein', 'ADJD', '0', 'None', '1', '\n']] 
         
         # form of splitted_compound = 
-        # [[63, 'schweineschwer', ['Schweine', 'Schwer']], [67, 'klitzeklein', ['Klitze', 'Klein']]]
+        # [(-0.5835459759340652, 'Wirk', 'Lich'), (-1.2466482494150914, 'Wir', 'Klich'), (-1.5259082915111741, 'Wirkl', 'Ich')] 
+        # [(0.8513328138442754, 'Ein', 'Fach'), (-0.7000849466864454, 'Einf', 'Ach')]
         splitted_compound = splitter.split_compound(compound[1][0])
-        lexem1 = splitted_compound[0][1]
-        lexem2 = splitted_compound[0][2]
-        #splitted_compounds[compound[0]] = compound[1][0], [lexem1, lexem2]
-        splitted_compounds.append([compound[0], compound[1][0], [lexem1, lexem2]])
+
+        if splitted_compound[0][0] > 0:
+            lexem1 = splitted_compound[0][1]
+            lexem2 = splitted_compound[0][2]
+            # splitted_compunds = [[index, compound, [lexem1, lexem2]], ...]
+            splitted_compounds.append([compound[0], compound[1][0], [lexem1, lexem2]])
 
 
-    return compounds, splitted_compounds
+    return splitted_compounds
 
 def insert_compounds(data_variable, splitted_compounds):
     
@@ -201,11 +210,12 @@ def insert_compounds(data_variable, splitted_compounds):
         # schwer,   ADJD, 0, None, 0
 
         # will die form: [index, [[lex1, tag, ifoA, ped/att/None, itsf], [lex2, tag, ifoA, ped/att/None, itsf]]]
-
+        #print(compound)
+        #print(tokens_tags[0][])
         if tokens_tags[0][1][1] == "ADJD":
             index_token_tag[compound[0]] = [tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "pred", "1"], [tokens_tags[0][1][0], tokens_tags[0][1][1], "0", "None", "0"]
 
-        elif tokens_tags[1][1][1] == "ADJA":
+        elif tokens_tags[0][1][1] == "ADJA":
             index_token_tag[compound[0]] = [tokens_tags[0][0][0], tokens_tags[0][0][1], "1", "att", "1"], [tokens_tags[0][1][0], tokens_tags[0][1][1], "0", "None", "0"]
 
         else:
@@ -248,6 +258,7 @@ def run_script(filename):
 
     #print(train_test_data(data_input, sentences))
     train_data, test_data, train_sentences, test_sentences = train_test_data(data_input, sentences)
+    
     #print(train_data)
     #print(test_data)
     #print(test_sentences)
@@ -257,6 +268,7 @@ def run_script(filename):
     #print(test_tokens_tags)
     train_tokens_tags = pos_tagging(train_sentences)
     test_tokens_tags = pos_tagging(test_sentences)
+    #print(test_tokens_tags)
 
     # update the train_data
     for index, token in enumerate(train_data):
@@ -268,15 +280,29 @@ def run_script(filename):
         pos_tag = test_tokens_tags[index][1]
         token.insert(1, pos_tag)
 
-    compounds, train_splitted_compounds = splitcompounds(train_data)
-    compounds, test_splitted_compounds = splitcompounds(test_data)
+    #print(test_data)
 
+    # bis hier funktioniert es alles gut soweit 
 
-    new_train_data = insert_compounds(train_data, train_splitted_compounds)
-    print(new_train_data)
+    train_splitted_compounds = splitcompounds(train_data)
+    #print(train_splitted_compounds)
+    test_splitted_compounds = splitcompounds(test_data)
+
+    # if there are no new compounds that need to be added, skip
+    # the adding part
+    if train_splitted_compounds != []:
+        new_train_data = insert_compounds(train_data, train_splitted_compounds)
+    else:
+        new_train_data = train_data
+    if test_splitted_compounds != []:
+        new_test_data = insert_compounds(test_data, test_splitted_compounds)
+    else:
+        new_test_data = test_data
+    print(new_test_data)
 
 if __name__ == "__main__":
 
-    filename = "preproc_test.txt"
+    #filename = "preproc_test.txt"
+    filename = "test_on_data5.txt"
 
     run_script(filename)
