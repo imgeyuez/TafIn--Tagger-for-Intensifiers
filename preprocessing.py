@@ -375,7 +375,7 @@ def train_and_test(documents):
                 y_sent_info.append(token[2])
         
             x_train.append(x_sent_info)
-            y_train.append(x_sent_info)
+            y_train.append(y_sent_info)
             
         else:
             for token in document:
@@ -383,7 +383,7 @@ def train_and_test(documents):
                 y_sent_info.append(token[2])
 
             x_test.append(x_sent_info)
-            y_test.append(x_sent_info)
+            y_test.append(y_sent_info)
         
 
     return x_train, y_train, x_test, y_test
