@@ -350,6 +350,47 @@ def annotation(tokens_tags, labels):
 
     return documents
 
+def train_and_test(documents):
+    documents_amount = len(documents)
+    train_amount = documents_amount / 100 * 80
+
+    x_train = list()
+    y_train = list()
+
+    x_test = list()
+    y_test = list()
+
+
+    # train_documents = list()
+    # test_documents = list()
+
+    for amount, document in enumerate(documents):
+        x_sent_info = list()
+        y_sent_info = list()
+
+        # if we're under the amount of the trainset
+        if amount+1 < train_amount:
+            for token in document:
+                x_sent_info.append((token[0], token[1]))
+                y_sent_info.append(token[2])
+        
+            x_train.append(x_sent_info)
+            y_train.append(x_sent_info)
+            
+        else:
+            for token in document:
+                x_sent_info.append((token[0], token[1]))
+                y_sent_info.append(token[2])
+
+            x_test.append(x_sent_info)
+            y_test.append(x_sent_info)
+        
+
+    return x_train, y_train, x_test, y_test
+        
+
+    # return train_documents, test_documents
+
 def run_script(filename):
     ##########################################################
     file_data = readfile(filename)
@@ -394,7 +435,9 @@ def run_script(filename):
         
         documents.append(document )
 
-    return documents
+    x_train, y_train, x_test, y_test = train_and_test(documents)
+    
+    return x_train, y_train, x_test, y_test
 
 
 if __name__ == "__main__":
@@ -402,4 +445,5 @@ if __name__ == "__main__":
     filename = "0_test_data.txt"
 
     documents = run_script(filename)
+
 
