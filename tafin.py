@@ -7,10 +7,11 @@ from _clean import labeling
 from _clean import annotation
 from _clean_2 import test_and_train
 
-import pycrfsuite
 from sklearn.model_selection import train_test_split
+import pycrfsuite
 
-filename = "0_test_data.txt"
+#filename = "0_test_data.txt"
+filename = "8997_blog.xml.tsv"
 
 file_data = readfile(filename)
 sentences = get_sentences(file_data)
@@ -124,5 +125,62 @@ x_inputs = [extract_features(doc) for doc in documents]
 y_outputs = [get_labels(doc) for doc in documents]
 
 
-x_train, x_test, y_train, y_test = train_test_split(x_inputs, y_outputs, test_size=0.2)
+x_train, x_test, y_train, y_test = train_test_split(x_inputs, y_outputs, test_size=0.2, shuffle=False)
 #print(x_train)
+"""
+    x_train für ein doc schaut aus wie: 
+    [{'bias': 1.0, 'word': 'Es', 'word.islower()': False, 'postag': 'PPER', 'next_token': 'ist', 'next_token.islower()': True, 'next_postag': 'VAFIN'}, {'bias': 1.0, 'word': 'ist', 'word.islower()': True, 'postag': 'VAFIN', 'prev_token': 'Es', 'prev_postag': 'PPER', 'next_token': 'sau', 'next_token.islower()': True, 'next_postag': 'ITJ'}, 
+    {'bias': 1.0, 'word': 'sau', 'word.islower()': True, 'postag': 'ITJ', 'prev_token': 'ist', 'prev_postag': 'VAFIN', 'next_token': 'kalt', 'next_token.islower()': True, 'next_postag': 'ADJD'}, 
+    {'bias': 1.0, 'word': 'kalt', 'word.islower()': True, 'postag': 'ADJD', 'prev_token': 'sau', 'prev_postag': 'ITJ', 'next_token': '.', 'next_token.islower()': False, 'next_postag': '$.'}, 
+    {'bias': 1.0, 'word': '.', 'word.islower()': False, 'postag': '$.', 'prev_token': 'kalt', 'prev_postag': 'ADJD'}
+    ]]
+"""
+
+"""     Ich glaube, das brauche ich nicht mehr
+
+# # extrahierung der trainings features und labels
+# x_train = [extract_features(doc) for doc in train_data]
+# y_train = [get_lables(doc) for doc in train_data]
+
+# # extrahierung der test features und labels
+# x_test = [extract_features(doc) for doc in test_data]
+# y_test = [get_lables(doc) for doc in test_data]
+# """
+
+# # training the model
+trainer = pycrfsuite.Trainer(verbose=True)
+
+# for each sequence of input and output within the input and output data
+for xseq, yseq in zip(x_train, y_train):
+    # train the model
+    trainer.append(xseq, yseq)
+
+# paramenters of the model
+trainer.set_params({
+    # coefficient for L1 penalty
+    'c1': 0.1,
+
+    # coefficient for L2 penalty
+    'c2': 0.01,  
+
+    # maximum number of iterations
+    'max_iterations': 200,
+
+    # whether to include transitions that
+    # are possible, but not observed
+    'feature.possible_transitions': True
+    })
+
+# Provide a file name as a parameter to the train function, such that
+# the model will be saved to the file when training is finished
+trainer.train("crf.model")
+
+
+# use the trained model
+tagger = pycrfsuite.Tagger()
+tagger.open("crf.model")
+y_pred = [tagger.tag(xseq) for xseq in x_test]
+
+print(y_pred)
+print("\n")
+print(y_test)
