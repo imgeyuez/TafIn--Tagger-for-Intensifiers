@@ -350,47 +350,56 @@ def annotation(tokens_tags, labels):
 
     return documents
 
-##########################################################
-file_data = readfile("0_test_data.txt")
-#file_data = readfile("8997_blog.xml.tsv")
-#print(file_data)
+def run_script(filename):
+    ##########################################################
+    file_data = readfile(filename)
+    #file_data = readfile("8997_blog.xml.tsv")
+    #print(file_data)
 
-sentences = get_sentences(file_data)
-#print(sentences)
+    sentences = get_sentences(file_data)
+    #print(sentences)
 
-tokens_tags = pos_tagging(sentences)
-#print(tokens_tags)
+    tokens_tags = pos_tagging(sentences)
+    #print(tokens_tags)
 
-splitted_compounds = split_compounds(sentences, tokens_tags)
-#print(splitted_compounds)
+    splitted_compounds = split_compounds(sentences, tokens_tags)
+    #print(splitted_compounds)
 
-tagged_compounds = tag_compounds(sentences, splitted_compounds)
-#print(tagged_compounds)
-keys = tagged_compounds.keys() 
-#print(keys)
+    tagged_compounds = tag_compounds(sentences, splitted_compounds)
+    #print(tagged_compounds)
+    keys = tagged_compounds.keys() 
+    #print(keys)
 
-#labeling(sentences, tokens_tags)
-labels = labeling(sentences, tokens_tags)
-#print(labels)
+    #labeling(sentences, tokens_tags)
+    labels = labeling(sentences, tokens_tags)
+    #print(labels)
 
-work_annot = annotation(tokens_tags, labels)
+    work_annot = annotation(tokens_tags, labels)
 
-# documents which beholds each annotation for each token in a sentence
-# devided by sentences
-documents = list()
+    # documents which beholds each annotation for each token in a sentence
+    # devided by sentences
+    documents = list()
 
-for index, annot in enumerate(work_annot):
-    document = list()
-    for i, token in enumerate(annot):
-        if token[0] in keys:
-            #print(token)
-            tokens = tagged_compounds.get(token[0])
-            document.append(tokens[0])
-            document.append(tokens[1])
+    for index, annot in enumerate(work_annot):
+        document = list()
+        for i, token in enumerate(annot):
+            if token[0] in keys:
+                #print(token)
+                tokens = tagged_compounds.get(token[0])
+                document.append(tokens[0])
+                document.append(tokens[1])
 
-        else:
-            document.append(token)
-    
-    documents.append(document )
+            else:
+                document.append(token)
+        
+        documents.append(document )
 
-#print(documents )
+    return documents
+
+
+if __name__ == "__main__":
+
+    filename = "0_test_data.txt"
+
+    documents = run_script(filename)
+
