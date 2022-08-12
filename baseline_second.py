@@ -20,51 +20,94 @@ nach weiteren Intensivierern geschaut wird, aber weiß nicht, inwieweit
 das schon zu viel wäre .. hmm
 """
 
-# if-Bedingung, ob es sich bei Token um ein Adjektiv handelt
-    # if token == ADJD or token == ADJA:
-        # gucken, was das Objekt links daneben ist:
-            # if token[-1] nicht Verb, nicht Determinant: markiere
-                # es als Intensivierer
-            #else: pass
-    # else: pass
+from _preproc import train_test
+import numpy as np
+from sklearn.metrics import classification_report
 
-def baseline_two(data):
-    """
-        Identification of intensifiers with heuristic method:
-        Token in front of an adjective, that is not a verb
+training_data, test_data = train_test()
 
-        Won't find intensifiers as in
-        Super cool.
-        Das ist ein bisschen blöd.
-        Ganz ganz super gemacht.
-        
-    """
-    # import re
-    # pattern = r"VAFIN [A-Z]+ (ADJD|ADJA)"
+def get_inputs(doc):
+    return [(token, postag) for (token, postag, label) in doc]
+    
+x_test = [get_inputs(doc) for doc in test_data]
 
-def baseline_two(data):
-    import re
-    pattern = r"VAFIN [A-Z]+ (ADJD|ADJA)"
+def get_labels(doc):
+    return [label for (token, postag, label) in doc]
 
+y_test = [get_labels(doc) for doc in test_data]
+
+
+def baseline_two(x_test):
+
+    # list of predicted labels
     y_pred = list()
-    tags = list()
-    for token in data:
-        tags.append(token[1])
 
-    tags_len = len(tags)
-    for index, tag in enumerate(tags):
-        if index != tags_len-1:
-            try:
-                if tags[index+1] == "ADJA" or tags[index+1] == "ADJD":
-                    if tags[index-1] == "VAFIN":
-                        print(tags[index-1], tag, tags[index+1])
-                        y_pred.append(1)
+    """
+    So schaut die train data aus:
+    [[('Ich', 'PPER', 'O'), ('hab', 'VAFIN', 'O'), ('dann', 'ADV', 'O'), 
+    ('auch', 'ADV', 'O'), ('schnell', 'ADJD', 'O'), ('gewählt', 'VVPP', 'O'), 
+    ('und', 'KON', 'O'), ('saß', 'VVFIN', 'O'), ('mit', 'APPR', 'O'), 
+    ('meiner', 'PPOSAT', 'O'), ('sehr', 'PTKIFG', 'B-ITSF'), 
+    ('aufgeräumten', 'ADJA', 'O'), (',', '$,', 'O'), ('gut', 'ADJD', 'O'), 
+    ('gelaunten', 'ADJA', 'O'), ('und', 'KON', 'O'), ('gesprächigen', 'ADJA', 'O'), 
+    ('Tochter', 'NN', 'O'), ('beim', 'APPRART', 'O'), ('Essen', 'NN', 'O'), 
+    ('.', '$.', 'O')], [('WIR', 'PPER', 'O'), ('SIND', 'VAFIN', 'O'), 
+    ('ZUSAMMEN', 'ADV', 'O'), ('ESSEN', 'NN', 'O'), ('GEGANGEN', 'VVPP', 'O'), 
+    ('.', '$.', 'O')], [('In', 'APPR', 'O'), ('einem', 'ART', 'O'), 
+    ('richtigen', 'ADJA', 'O'), ('Restaurant', 'NN', 'O'), (',', '$,', 'O'), 
+    ('Freitagsabends', 'NN', 'O'), ('.', '$.', 'O')]]
+    """
 
+    # read in the file with the intensifiers
+    with open("list_intensifiers.txt", "r", encoding="UTF-8-sig") as file:
+        intensifiers = file.read()
+            
+    #print(intensifiers_list)
+
+    # look into a sentence
+    for doc in x_test:
+        sent_pred = list()
+        # go through each token
+        for i, token in enumerate(doc):
+            if i < len(doc)-1:
+                # if the following token is an adjective
+                if doc[i+1][1] == "ADJA" or doc[i+1][1] == "ADJD":
+                    # look if the token is within the list
+                    # of intensifiers
+                    if token[0] in intensifiers:
+                        sent_pred.append("B-ITSF")
+                    # if it is not, label it as O
                     else:
-                        y_pred.append(0)
+                        sent_pred.append("O")
+                # if the following token is not an adjective
+                # it is not an intensifier of an adjective
+                # and therefore O
                 else:
-                    y_pred.append(0)
-            except:
-                y_pred.append(0)
+                    sent_pred.append("O")
+            # if the last token is in the intensifier list
+            else:
+                sent_pred.append("O")
+
+        y_pred.append(sent_pred)
 
     return y_pred
+
+#baseline_two(x_test)
+pred_baseline_two = baseline_two(x_test)
+
+# for index, row in enumerate(pred_baseline_two):
+#     for i, tag in enumerate(row):
+#         print(tag, "\t", y_test[index][i])
+
+
+# Create a mapping of labels to indices
+labels = {"O": 0, "B-ITSF": 1, "I-ITSF": 2}
+
+# Convert the sequences of tags into a 1-dimensional array
+predictions = np.array([labels[tag] for row in pred_baseline_two for tag in row])
+truths = np.array([labels[tag] for row in y_test for tag in row])
+
+# Print out the classification report
+print(classification_report(
+    truths, predictions,
+    target_names=["O", "B-ITSF", "I-ITSF"]))
