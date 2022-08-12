@@ -1,6 +1,6 @@
+import os, glob
 import re
 from someweta import ASPTagger
-import pycrfsuite
 from charsplit import Splitter
 
 # load the modules
@@ -10,21 +10,33 @@ model = "german_web_social_media_2020-05-28.model"
 asptagger = ASPTagger()
 asptagger.load(model)
 
-def readfile(filename):
+def readfile():
     """
         Reads the file and saves its content within a variable.
         One row of the data is one entry within the list file_input
     """
-    with open(filename, encoding="UTF-8-sig") as file:
-        file_input = file.readlines()
 
-        file_data = list()
+    files_data = list()
 
-        for line in file_input:
-            file_data.append(line.split("\t"))
+    for filename in glob.glob('*.tsv'):
+        with open(os.path.join(os.getcwd(), filename), 'r', encoding="UTF-8-sig") as file: # open in readonly mode
+            file_input = file.readlines()
+            for line in file_input:
+                files_data.append(line.split("\t"))
+            
+    """
+    files_data = list()
+
+    for filename in filenames:
+        with open(filename, 'r', encoding="UTF-8-sig") as file:
+            file_input = file.readlines()
 
 
-    return file_data
+            for line in file_input:
+                files_data.append(line.split("\t"))
+    """
+
+    return files_data
 
 def get_sentences(file_data):
     """
@@ -48,7 +60,8 @@ def get_sentences(file_data):
             sentence = list()
 
         else:
-            pattern = re.search(r"[0-9]+-[0-9]+", element[0])
+            #pattern = re.search(r"^([0-9]+-[0-9]+)", element[0])
+            pattern = re.search(r"^([0-9]+-[0-9]+)", element[0])
 
             if pattern:
                 sentence.append(element)
@@ -68,15 +81,11 @@ def pos_tagging(sentences):
         sent = list()
 
         for token in sentence:
+            # print(token)
+            # print(token[2])
             sent.append(token[2])
         
         sentences_to_tag.append(sent)
-
-    # loads pretrained model form someweta
-    # model = "german_web_social_media_2020-05-28.model"
-
-    # asptagger = ASPTagger()
-    # asptagger.load(model)
 
     tokens_tags = list()
 
@@ -151,7 +160,7 @@ def split_compounds(sentences, tokens_tags):
 
     return splitted_compounds
 
-def tag_compounds(sentences, splitted_compounds):
+def tag_compounds(splitted_compounds):
     
     # einzelne token des compounds
     #  ergänzen und dann
@@ -332,7 +341,7 @@ def labeling(sentences, tokens_tags):
         
         label.append(sent_labels)
     
-    return label    
+    return label  
 
 def annotation(tokens_tags, labels):
     documents = list()
@@ -350,7 +359,7 @@ def annotation(tokens_tags, labels):
 
     return documents
 
-def train_and_test(documents):
+def test_and_train(documents):
     documents_amount = len(documents)
     train_amount = documents_amount / 100 * 80
 
@@ -360,10 +369,6 @@ def train_and_test(documents):
     x_test = list()
     y_test = list()
 
-
-    # train_documents = list()
-    # test_documents = list()
-
     for amount, document in enumerate(documents):
         x_sent_info = list()
         y_sent_info = list()
@@ -371,6 +376,7 @@ def train_and_test(documents):
         # if we're under the amount of the trainset
         if amount+1 < train_amount:
             for token in document:
+                #print(token)
                 x_sent_info.append((token[0], token[1]))
                 y_sent_info.append(token[2])
         
@@ -387,13 +393,10 @@ def train_and_test(documents):
         
 
     return x_train, y_train, x_test, y_test
-        
 
-    # return train_documents, test_documents
+def run_script():
 
-def run_script(filename):
-    ##########################################################
-    file_data = readfile(filename)
+    file_data = readfile()
     #file_data = readfile("8997_blog.xml.tsv")
     #print(file_data)
 
@@ -406,7 +409,7 @@ def run_script(filename):
     splitted_compounds = split_compounds(sentences, tokens_tags)
     #print(splitted_compounds)
 
-    tagged_compounds = tag_compounds(sentences, splitted_compounds)
+    tagged_compounds = tag_compounds(splitted_compounds)
     #print(tagged_compounds)
     keys = tagged_compounds.keys() 
     #print(keys)
@@ -421,6 +424,7 @@ def run_script(filename):
     # devided by sentences
     documents = list()
 
+    #adding the splitted compounds to the data
     for index, annot in enumerate(work_annot):
         document = list()
         for i, token in enumerate(annot):
@@ -433,17 +437,74 @@ def run_script(filename):
             else:
                 document.append(token)
         
-        documents.append(document )
+        documents.append(document)
 
-    x_train, y_train, x_test, y_test = train_and_test(documents)
+    # # splitting data into train, test and each into input and output data
+    # x_train, y_train, x_test, y_test = test_and_train(documents)
     
-    return x_train, y_train, x_test, y_test
+    #return x_train, y_train, x_test, y_test
+    return documents 
 
+    
 
 if __name__ == "__main__":
 
-    filename = "0_test_data.txt"
+    #filename = "0_test_data.txt"
+    # filenames = ["1095_blog.xml.tsv", 
+    #     "1095_blog.xml.tsv", 
+    #     "1106_blog.xml.tsv", 
+    #     "1123_blog.xml.tsv", 
+    #     "1254_blog.xml.tsv",
+    #     "1461_blog.xml.tsv",
+    #     "1611_blog.xml.tsv",
+    #     "1639_blog.xml.tsv",
+    #     "2008_blog.xml.tsv",
+    #     "2191_blog.xml.tsv",
+    #     "2289_blog.xml.tsv",
+    #     "2995_blog.xml.tsv", 
+    #     "3238_blog.xml.tsv",
+    #     "3365_blog.xml.tsv",
+    #     "3499_blog.xml.tsv",
+    #     "3580_blog.xml.tsv",
+    #     "4232_blog.xml.tsv",
+    #     "4308_blog.xml.tsv",
+    #     "4361_blog.xml.tsv",
+    #     "4386_blog.xml.tsv",
+    #     "4421_blog.xml.tsv",
+    #     "4677_blog.xml.tsv",
+    #     "4746_blog.xml.tsv",
+    #     "5035_blog.xml.tsv",
+    #     "5440_blog.xml.tsv",
+    #     "5487_blog.xml.tsv",
+    #     "5743_blog.xml.tsv",
+    #     "6317_blog.xml.tsv",
+    #     "6794_blog.xml.tsv",
+    #     "6838_blog.xml.tsv",
+    #     "6944_blog.xml.tsv",
+    #     "7291_blog.xml.tsv",
+    #     "7435_blog.xml.tsv",
+    #     "7621_blog.xml.tsv",
+    #     "7671_blog.xml.tsv",
+    #     "7704_blog.xml.tsv",
+    #     "7846_blog.xml.tsv",
+    #     "8300_blog.xml.tsv",
+    #     "8391_blog.xml.tsv",
+    #     "8802_blog.xml.tsv",
+    #     "8997_blog.xml.tsv",
+    #     "9065_blog.xml.tsv",
+    #     "9388_blog.xml.tsv",
+    #     "9475_blog.xml.tsv",
+    #     "9887_blog.xml.tsv"
+    # ]
 
-    documents = run_script(filename)
+    #run_script(filenames)
+    documents = run_script()
+
+
+    print(documents)
+    
+    
+    #x_train, y_train, x_test, y_test = run_script(filename)
+
 
 
