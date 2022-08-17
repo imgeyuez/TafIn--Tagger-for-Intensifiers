@@ -1,68 +1,58 @@
 """
-Das folgende Programm präsentiert die zweite Baseline.
-Baselines werden verwendet, um vergleichen zu können, ob sich das 
-implementierte Programm "lohnt" oder keinen Unterschied zu vorherigen
-Methoden macht.
-
-Die 1. Baseline: 
-    POS-Tags ADJD & ADJA herausfiltern und das links davon
-    stehende Element als Intensivierer markieren, solange es kein 
-    Verb ist
-    Also sprich: einfach eine heuristische Methode
-
-Die 2. Baseline:
-    Kann ein Modell von dem Empirist Modell darstellen mit ihrer 
-    Sammelklasse von Fokus- Graduierungs- und Intensitätspartikeln. 
-    Das von someweta
-
-Könnte auch ne 3. Baseline einbauen, bei der mit den Wörterlisten
-nach weiteren Intensivierern geschaut wird, aber weiß nicht, inwieweit
-das schon zu viel wäre .. hmm
+This file contains the second baseline. 
+It marks tokens as an intensifier if they are 
+in front of an adjective and if they are within 
+a given list of intensifiers.
 """
 
+#####################################
+#   modules
+#####################################
 from _preproc import train_test
 import numpy as np
 from sklearn.metrics import classification_report
 
-training_data, test_data = train_test()
+#####################################
+#   functions
+#####################################
 
 def get_inputs(doc):
+    """
+        Function to extract the tokens and pos-tags 
+        as input for the model from the test data.
+        Input:
+        1. doc (list)               :   List, that contains token and pos-tag 
+                                        input from the test data.
+        1. (token, postag) (tuple)  :   Tuple containing the token and the 
+                                        pos-tag.
+    """
     return [(token, postag) for (token, postag, label) in doc]
     
-x_test = [get_inputs(doc) for doc in test_data]
-
 def get_labels(doc):
+    """
+        Function to extract the labels as goldlabels 
+        for the model from the test data.
+        Input:
+        1. doc (list)   :   List, that contains token and pos-tag 
+                            input from the test data.
+        1. label (str)  :   String containing the label.
+    """
     return [label for (token, postag, label) in doc]
 
-y_test = [get_labels(doc) for doc in test_data]
-
-
 def baseline_two(x_test):
+    """
+        Function for the second baseline.
+        It marks tokens as an intensifier if they are in 
+        front of an adjective and if they are within a given 
+        list of intensifiers.
+    """
 
     # list of predicted labels
     y_pred = list()
 
-    """
-    So schaut die train data aus:
-    [[('Ich', 'PPER', 'O'), ('hab', 'VAFIN', 'O'), ('dann', 'ADV', 'O'), 
-    ('auch', 'ADV', 'O'), ('schnell', 'ADJD', 'O'), ('gewählt', 'VVPP', 'O'), 
-    ('und', 'KON', 'O'), ('saß', 'VVFIN', 'O'), ('mit', 'APPR', 'O'), 
-    ('meiner', 'PPOSAT', 'O'), ('sehr', 'PTKIFG', 'B-ITSF'), 
-    ('aufgeräumten', 'ADJA', 'O'), (',', '$,', 'O'), ('gut', 'ADJD', 'O'), 
-    ('gelaunten', 'ADJA', 'O'), ('und', 'KON', 'O'), ('gesprächigen', 'ADJA', 'O'), 
-    ('Tochter', 'NN', 'O'), ('beim', 'APPRART', 'O'), ('Essen', 'NN', 'O'), 
-    ('.', '$.', 'O')], [('WIR', 'PPER', 'O'), ('SIND', 'VAFIN', 'O'), 
-    ('ZUSAMMEN', 'ADV', 'O'), ('ESSEN', 'NN', 'O'), ('GEGANGEN', 'VVPP', 'O'), 
-    ('.', '$.', 'O')], [('In', 'APPR', 'O'), ('einem', 'ART', 'O'), 
-    ('richtigen', 'ADJA', 'O'), ('Restaurant', 'NN', 'O'), (',', '$,', 'O'), 
-    ('Freitagsabends', 'NN', 'O'), ('.', '$.', 'O')]]
-    """
-
     # read in the file with the intensifiers
     with open("list_intensifiers.txt", "r", encoding="UTF-8-sig") as file:
         intensifiers = file.read()
-            
-    #print(intensifiers_list)
 
     # look into a sentence
     for doc in x_test:
@@ -92,22 +82,10 @@ def baseline_two(x_test):
 
     return y_pred
 
-#baseline_two(x_test)
+training_data, test_data = train_test()
+
+x_test = [get_inputs(doc) for doc in test_data]
+
+y_test = [get_labels(doc) for doc in test_data]
+
 pred_baseline_two = baseline_two(x_test)
-
-# for index, row in enumerate(pred_baseline_two):
-#     for i, tag in enumerate(row):
-#         print(tag, "\t", y_test[index][i])
-
-
-# Create a mapping of labels to indices
-labels = {"O": 0, "B-ITSF": 1, "I-ITSF": 2}
-
-# Convert the sequences of tags into a 1-dimensional array
-predictions = np.array([labels[tag] for row in pred_baseline_two for tag in row])
-truths = np.array([labels[tag] for row in y_test for tag in row])
-
-# Print out the classification report
-print(classification_report(
-    truths, predictions,
-    target_names=["O", "B-ITSF", "I-ITSF"]))
