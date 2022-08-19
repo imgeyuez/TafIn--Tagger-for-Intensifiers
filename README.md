@@ -43,6 +43,24 @@ Therefore no adjustments are needed.
 3. Based on the choosen option, one of the following next steps will occur:
 
     1. Option `0 Close program`:
+        
+        Closes the program.
+    2. Option `1 Baseline 1`:
+    
+        Leads to the labelprediction of baseline 1 and to the option to see the evaluation of it. The user can choose between:
+        
+        * `Should the output be printed? 0 No 1 Yes` With 0, no Output will be printed. With 1, the output will be printed.
+        * `Should the results of the evaluation be printed? 0 No 1 Yes` With 0, no evaluation will be printed. With 1 the results of the evaluation will be printed. 
+
+    3. Option `2 Baseline 2`:
+    
+        Leads to the same options as option 1 but this time with results from the second baseline.
+        
+    4. Option `3 TafIn`:
+        
+        Leads to the mainfocus of this project. Here are three options available. 
+        
+        * `A trained model is available. Should the process of training be repeated or just the trained model used on the test data? 1 Train model again. 2 Use trained model on test data.`
 
 
 ### No access to the data - Not provided yet.
