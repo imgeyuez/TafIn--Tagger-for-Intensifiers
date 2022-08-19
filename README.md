@@ -72,7 +72,7 @@ Therefore no adjustments are needed.
            
            `1 Train model again.`: Trains the model again to use it on the testdata afterwards. 
            
-           `2 Use trained model on test data.`: Skips the step to train the model and uses the pretrained model file `tafin_crf.model` on the test data.
+           `2 Use trained model on test data.`: Skips the step to train the model and uses the pretrained model file `crf.model` on the test data.
         * `Should the output be printed?`
            
            `0 No`: No Output will be printed.
