@@ -49,9 +49,12 @@ Therefore no adjustments are needed.
     
         Leads to the labelprediction of baseline 1 and to the option to see the evaluation of it. The user can choose between:
         
-        * ```Should the output be printed? 
-        0 No 1 Yes``` With 0, no Output will be printed. With 1, the output will be printed.
-        * `Should the results of the evaluation be printed? 0 No 1 Yes` With 0, no evaluation will be printed. With 1 the results of the evaluation will be printed. 
+        * `Should the output be printed?` 
+           `0 No`: No Output will be printed.
+           `1 Yes`: Output will be printed.
+        * `Should the results of the evaluation be printed?` 
+           `0 No`: No evaluation will be printed.
+           `1 Yes`: Results of the evaluation will be printed. 
 
     3. Option `2 Baseline 2`:
     
@@ -61,7 +64,15 @@ Therefore no adjustments are needed.
         
         Leads to the mainfocus of this project. Here are three options available. 
         
-        * `A trained model is available. Should the process of training be repeated or just the trained model used on the test data? 1 Train model again. 2 Use trained model on test data.`
+        * `A trained model is available. Should the process of training be repeated or just the trained model used on the test data?`
+           `1 Train model again.`: Trains the model again to use it on the testdata afterwards. 
+           `2 Use trained model on test data.`: Skips the step to train the model and uses the pretrained model file `tafin_crf.model` on the test data.
+        * `Should the output be printed?`
+           `0 No`: No Output will be printed.
+           `1 Yes`: Output will be printed.
+        * `Should the results of the evaluation be printed?` 
+           `0 No`: No evaluation will be printed.
+           `1 Yes`: Results of the evaluation will be printed. 
 
 
 ### No access to the data - Not provided yet.
