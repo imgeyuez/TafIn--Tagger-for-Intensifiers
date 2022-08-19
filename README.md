@@ -28,8 +28,8 @@ With access to the specific data (or data that is structured in the same way), o
 If the requirements are also fullfilled, main.py can be run and the user is guided through the application of TafIn.
 Therefore no adjustments are needed.
 
-1. Starting the program.\nStarting 
-2. 
+1. Starting the program.
+Starting with
 
 
 ### No access to the data - Not provided yet.
