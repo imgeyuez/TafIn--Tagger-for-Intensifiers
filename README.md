@@ -29,7 +29,8 @@ If the requirements are also fullfilled, main.py can be run and the user is guid
 Therefore no adjustments are needed.
 
 1. Starting the program.
-Starting with
+
+...Starting with
 
 
 ### No access to the data - Not provided yet.
