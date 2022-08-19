@@ -30,7 +30,18 @@ Therefore no adjustments are needed.
 
 1. Starting the program.
 
-   Starting with
+   The program starts when all the requirements are fullfilled and main.py is executed.
+2. After the data is preprocessed, a menue will pop up with the following options:
+
+   ```
+   0  Close program
+   1  Baseline 1
+   2  Baseline 2
+   3  TafIn
+   ```
+   
+3. Based on the choosen option, one of the following next steps will occur:
+  3. Option `0 Close program`:
 
 
 ### No access to the data - Not provided yet.
