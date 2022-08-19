@@ -71,7 +71,10 @@ def run_script():
         # ask user which model should be used
         model = int(input("Which model do you want to use/evaluate?\nPlease choose one of the following:\n0\tClose program.\n1\tBaseline 1\n2\tBaseline 2\n3\tTafIn\n\n"))
 
-        if model == 1:
+        if model == 0:
+            break 
+        
+        elif model == 1:
             print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n"))
             print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n"))
 
