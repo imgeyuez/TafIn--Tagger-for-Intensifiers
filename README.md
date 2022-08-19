@@ -18,7 +18,12 @@ pip install
 ```
 
 ## Usage
-### Use the pretrained model:
-```
+As this project is specificly designed to fit a certain data arrangement, the ui.py file is only useful if one has acces to the data (see paper). 
 
-```
+### With access to the data
+With access to the specific data, one only needs to save the data and all the implementation files within a same folder. 
+If the requirements are also fullfilled, main.py can be run and the user is guided through the application of TafIn.
+Therefore no adjustments are needed.
+
+### No access to the data - Not provided yet.
+The trained model is accessable but there is no provided guide on how to use it yet.
