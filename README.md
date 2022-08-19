@@ -49,7 +49,8 @@ Therefore no adjustments are needed.
     
         Leads to the labelprediction of baseline 1 and to the option to see the evaluation of it. The user can choose between:
         
-        * `Should the output be printed? 0 No 1 Yes` With 0, no Output will be printed. With 1, the output will be printed.
+        * ```Should the output be printed? 
+        0 No 1 Yes``` With 0, no Output will be printed. With 1, the output will be printed.
         * `Should the results of the evaluation be printed? 0 No 1 Yes` With 0, no evaluation will be printed. With 1 the results of the evaluation will be printed. 
 
     3. Option `2 Baseline 2`:
