@@ -27,7 +27,9 @@ As the data is important for the preprocessing, it is not possible yet to contin
 With access to the specific data (or data that is structured in the same way), one only needs to save the data (-tsv-files) and all the implementation files within a same folder. 
 If the requirements are also fullfilled, main.py can be run and the user is guided through the application of TafIn.
 Therefore no adjustments are needed.
-Given are the following options:
+
+1. Starting the program.\nStarting 
+2. 
 
 
 ### No access to the data - Not provided yet.
