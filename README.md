@@ -41,7 +41,7 @@ Therefore no adjustments are needed.
    ```
    
 3. Based on the choosen option, one of the following next steps will occur:
-  3. Option `0 Close program`:
+  3.1. Option `0 Close program`:
 
 
 ### No access to the data - Not provided yet.
