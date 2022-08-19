@@ -83,6 +83,24 @@ Therefore no adjustments are needed.
            `0 No`: No evaluation will be printed.
            
            `1 Yes`: Results of the evaluation will be printed. 
+           
+### Use only pretrained model without main.py
+To use the pretrained TafIn model, use:
+
+```
+import pycrfsuite
+
+tagger = pycrfsuite.Tagger()
+tagger.open("crf.model")
+y_pred = [tagger.tag(xseq) for xseq in x_test]
+```
+
+Where x_test contains the inputs (token, postag) for every token in every sentence xseq like:
+
+```
+x_test = [[(Das,postag), (ist, postag), (ein, postag), (Beispiel, postag), (., &.)], 
+    [(it, postag), (should, postag), (look, postag), (like, postag), (this, postag), (., $.)]]
+```
 
 
 ### No access to the data - Not provided yet.
