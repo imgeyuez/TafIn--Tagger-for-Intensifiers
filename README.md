@@ -4,7 +4,7 @@ An implementation with the goal of a model, which can be used for an automatic i
 As this is the project of a thesis, there are also baselines within this repository, which were needed for a comparation in the evaluation.  
 
 
-# Requirements to run the model:
+## Requirements to run the model:
 In order for the model to run smoothly there is the need to install the following modules/packets:
 ```
 pip install
@@ -12,8 +12,8 @@ pip install
 pip install
 ```
 
-# Usage
-## Use the pretrained model:
+## Usage
+### Use the pretrained model:
 ```
 
 ```
