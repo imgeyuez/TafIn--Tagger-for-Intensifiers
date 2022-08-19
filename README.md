@@ -6,6 +6,18 @@ As this is the project of a thesis, there are also baselines within this reposit
 
 ## Requirements to run the model:
 In order for the model to run smoothly there is the need to install the following modules/packets:
+* charsplit       0.1     
+* joblib          1.1.0   
+* numpy           1.23.1  
+* pip             21.2.4  
+* python-crfsuite 0.9.8   
+* regex           2022.7.9
+* scikit-learn    1.1.1   
+* scipy           1.8.1   
+* setuptools      58.1.0  
+* sklearn         0.0     
+* SoMeWeTa        1.8.0   
+* threadpoolctl   3.1.0 
 ```
 pip install
 pip install
