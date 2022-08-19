@@ -18,12 +18,17 @@ pip install
 ```
 
 ## Usage
-As this project is specificly designed to fit a certain data arrangement, the ui.py file is only useful if one has acces to the data (see paper). 
+As this project is specificly designed to fit a certain data arrangement, the main.py file is only useful if one has access to the data (see paper).
+As the data is important for the preprocessing, it is not possible yet to continue the usage of TafIn without it. 
+
+**Please note, that while using the program, it can take a while until something is shown on the terminal as it takes a while to impoert and work through some of the various steps.**
 
 ### With access to the data
-With access to the specific data, one only needs to save the data and all the implementation files within a same folder. 
+With access to the specific data (or data that is structured in the same way), one only needs to save the data (-tsv-files) and all the implementation files within a same folder. 
 If the requirements are also fullfilled, main.py can be run and the user is guided through the application of TafIn.
 Therefore no adjustments are needed.
+Given are the following options:
+
 
 ### No access to the data - Not provided yet.
 The trained model is accessable but there is no provided guide on how to use it yet.
