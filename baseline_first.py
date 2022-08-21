@@ -9,9 +9,7 @@
 #   modules
 #####################################
 
-from _preproc import train_test
-import numpy as np
-from sklearn.metrics import classification_report
+# from _preproc import train_test
 
 #####################################
 #   functions
@@ -87,15 +85,3 @@ def baseline_first(x_test):
         y_pred.append(sent_pred)
 
     return y_pred
-
-# generating the data
-training_data, test_data = train_test()
-
-# generating the inputs for the testdata
-x_test = [get_inputs(doc) for doc in test_data]
-
-
-# extract the labels from the testdata
-y_test = [get_labels(doc) for doc in test_data]
-
-#pred_baseline_one = baseline_first(x_test)
