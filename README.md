@@ -1,9 +1,11 @@
 # TafIn--Tagger-for-Intensifiers
-An implementation, which can be used for an automatic identification of intensifiers of adjectives in German. This modell is trained on a german corpus, therefore the automatic identification will only be available for the German language so far.
+An implementation, which can be used for an automatic identification of intensifiers of adjectives in German. This model is trained on a german corpus, therefore the automatic identification will only be available for the German language so far.
 
 As this is the project of my bachelor thesis, there are also baselines within this repository, which were needed for a comparation in the evaluation.  
 
+The thesis itself might be uploaded after the grading.
 
+The model was trained and tested on Python 3.10.2.
 
 
 ## 1. Requirements to run the model:
