@@ -552,5 +552,3 @@ def train_test():
     training_data, test_data = train_test_split(documents, test_size=0.2, shuffle=False)
     
     return training_data, test_data 
-    
-
