@@ -8,8 +8,7 @@ a given list of intensifiers.
 #####################################
 #   modules
 #####################################
-from _preproc import train_test
-import numpy as np
+#from _preproc import train_test
 from sklearn.metrics import classification_report
 
 #####################################
@@ -39,13 +38,21 @@ def get_labels(doc):
     """
     return [label for (token, postag, label) in doc]
 
-def baseline_two(x_test):
+def baseline_second(x_test):
     """
         Function for the second baseline.
         It marks tokens as an intensifier if they are in 
         front of an adjective and if they are within a given 
         list of intensifiers.
+        Input:
+        1. x_test (list)    :   List, that contains the sentences
+                                of the test data.
+        Output:
+        1. y_pred (list)    :   List that contains the predicted 
+                                labels for each token in 
+                                every sentence.
     """
+
 
     # list of predicted labels
     y_pred = list()
@@ -81,11 +88,3 @@ def baseline_two(x_test):
         y_pred.append(sent_pred)
 
     return y_pred
-
-training_data, test_data = train_test()
-
-x_test = [get_inputs(doc) for doc in test_data]
-
-y_test = [get_labels(doc) for doc in test_data]
-
-pred_baseline_two = baseline_two(x_test)
