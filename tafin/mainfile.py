@@ -1,3 +1,21 @@
+"""
+    This file is the main file of the project.
+    It is designed to lead through all the steps which were involved to get to the 
+    result of the thesis.
+    Therefore it might be uninteresting and irrelevant for outsinders. 
+    
+    It only runs if the data, which is used for training and testing, is
+    within the same folder as all the files in the tafin-folder in this
+    github repository.
+    
+    If run, the data will be preprocessed. 
+    After that a menu pops up that guides the user through various 
+    steps.
+    For more details please refer to the README document.
+"""
+#####################################
+#   modules
+#####################################
 from preprocessing import train_test
 from evaluate import evaluation
 
@@ -70,137 +88,143 @@ def run_script():
 
         # ask user which model should be used
         model = int(input("Which model do you want to use/evaluate?\nPlease choose one of the following:\n0\tClose program.\n1\tBaseline 1\n2\tBaseline 2\n3\tTafIn\n\n"))
+        try: 
+            if model == 0:
+                break 
 
-        if model == 0:
-            break 
-        
-        elif model == 1:
-            print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n"))
-            print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n"))
+            elif model == 1:
+                print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n"))
+                print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n"))
 
-            # import first baseline
-            from baseline_first import baseline_first
+                # import first baseline
+                from baseline_first import baseline_first
 
-            print("STARTED:\tLabelprediction with Baseline 1.")
+                print("STARTED:\tLabelprediction with Baseline 1.")
 
-            # label predictions from baseline 1:
-            y_pred_b1 = baseline_first(x_test)
+                # label predictions from baseline 1:
+                y_pred_b1 = baseline_first(x_test)
 
-            print("FINISHED:\tLabelprediction with Baseline 1.")
+                print("FINISHED:\tLabelprediction with Baseline 1.")
 
-            if print_output == 1:
-                print("STARTED:\tPrinting results of Baseline 1.")
+                if print_output == 1:
+                    print("STARTED:\tPrinting labelprediction of Baseline 1.")
 
-                print(y_pred_b1)
+                    print(y_pred_b1)
 
-                print("FINISHED:\tPrinting results of Baseline 1.")
+                    print("FINISHED:\tPrinting labelprediction of Baseline 1.")
 
-            elif print_output == 0:
-                pass
+                elif print_output == 0:
+                    pass
 
-            else:
-                print("Invalid input. Please try again.")
+                else:
+                    print("Invalid input. Please try again.")
 
-            if print_evaluation == 1:
-                print("STARTED:\tEvaluation of Baseline 1.")
+                if print_evaluation == 1:
+                    print("STARTED:\tEvaluation of Baseline 1.")
 
-                print(evaluation(y_test, y_pred_b1))
+                    print(evaluation(y_test, y_pred_b1))
 
-                print("FINISHED:\tEvaluation of Baseline 1.")
+                    print("FINISHED:\tEvaluation of Baseline 1.")
 
-            elif print_evaluation == 0:
-                pass
+                elif print_evaluation == 0:
+                    pass
 
-            else:
-                print("Invalid input. Please try again.")
+                else:
+                    print("Invalid input. Please try again.")
 
-        elif model == 2:
-            print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n"))
-            print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n"))
+            elif model == 2:
+                print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n"))
+                print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n"))
 
-            # import first baseline
-            from baseline_second import baseline_second
+                # import first baseline
+                from baseline_second import baseline_second
 
-            print("STARTED:\tLabelprediction with Baseline 2.")
+                print("STARTED:\tLabelprediction with Baseline 2.")
 
-            # label predictions from baseline 1:
-            y_pred_b2 = baseline_second(x_test)
+                # label predictions from baseline 1:
+                y_pred_b2 = baseline_second(x_test)
 
-            print("FINISHED:\tLabelprediction with Baseline 2.")
+                print("FINISHED:\tLabelprediction with Baseline 2.")
 
-            if print_output == 1:
-                print("STARTED:\tPrinting results of Baseline 2.")
+                if print_output == 1:
+                    print("STARTED:\tPrinting labelprediction of Baseline 2.")
 
-                print(y_pred_b2)
+                    print(y_pred_b2)
 
-                print("FINISHED:\tPrinting results of Baseline 2.")
+                    print("FINISHED:\tPrinting labelprediction of Baseline 2.")
 
-            elif print_output == 0:
-                pass
+                elif print_output == 0:
+                    pass
 
-            else:
-                print("Invalid input. Please try again.")
+                else:
+                    print("Invalid input. Please try again.")
 
 
-            if print_evaluation == 1:
-                print("STARTED:\tEvaluation of Baseline 2.")
+                if print_evaluation == 1:
+                    print("STARTED:\tEvaluation of Baseline 2.")
 
-                print(evaluation(y_test, y_pred_b2))
+                    print(evaluation(y_test, y_pred_b2))
 
-                print("FINISHED:\tEvaluation of Baseline 2.")
-            
-            elif print_evaluation == 0:
-                pass
+                    print("FINISHED:\tEvaluation of Baseline 2.")
+                
+                elif print_evaluation == 0:
+                    pass
 
-            else:
-                print("Invalid input. Please try again.")
+                else:
+                    print("Invalid input. Please try again.")
 
-        elif model == 3:
-            from tafin import train_tafin, test_tafin
-            print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n"))
-            print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n"))
+            elif model == 3:
+                from tafin import train_tafin, test_tafin
+                train_model = int(input("A trained model is available. Should the process of training be repeated or just the trained model used on the test data?\n1\tTrain model again.\n2\tUse trained model on test data.\n\n"))
+                print_output = int(input("Should the output be printed?\n0\tNo\n1\tYes\n\n"))
+                print_evaluation = int(input("Should the results of the evaluation be printed?\n0\tNo\n1\tYes\n\n"))
 
-            # training tafin
-            print("STARTED:\tTraining TafIn.")
-            
-            x_test_tafin = train_tafin(training_data, test_data)
+                if train_model == 1:
+                    # train tafin
+                    print("STARTED:\tTraining TafIn.")
+                    
+                    train_tafin(training_data)
 
-            print("FINISHED:\tTraining TafIn.")
-            
-            # predicition with tafin 
-            print("STARTED:\tLabelprediction with TafIn.")
-            
-            y_pred_tafin = test_tafin(x_test_tafin)
+                    print("FINISHED:\tTraining TafIn.")
 
-            print("FINISHED:\tLabelprediction with TafIn.")
+                elif train_model == 2:
+                    # predicit with tafin 
+                    print("STARTED:\tLabelprediction with TafIn.")
+                    
+                    y_pred_tafin = test_tafin(test_data)
 
-            if print_output == 1:
-                print("STARTED:\tPrinting results of TafIn.")
+                    print("FINISHED:\tLabelprediction with TafIn.")
+                
+                else:
+                    print("Invalid input. Please try again.")
 
-                print(y_pred_tafin)
+                if print_output == 1:
+                    print("STARTED:\tPrinting labelprediction of TafIn.")
 
-                print("FINISHED:\tPrinting results of TafIn.")
+                    print(y_pred_tafin)
 
-            elif print_output == 0:
-                pass
+                    print("FINISHED:\tPrinting labelprediction of TafIn.")
 
-            else:
-                print("Invalid input. Please try again.")
+                elif print_output == 0:
+                    pass
 
-            if print_evaluation == 1:
-                print("STARTED:\tEvaluation of TafIn.")
+                else:
+                    print("Invalid input. Please try again.")
 
-                print(evaluation(y_test, y_pred_tafin))
+                if print_evaluation == 1:
+                    print("STARTED:\tEvaluation of TafIn.")
 
-                print("FINISHED:\tEvaluation of TafIn.")
-            
-            elif print_evaluation == 0:
-                pass
+                    print(evaluation(y_test, y_pred_tafin))
 
-            else:
-                print("Invalid input. Please try again.")   
+                    print("FINISHED:\tEvaluation of TafIn.")
+                
+                elif print_evaluation == 0:
+                    pass
 
-        else:
+                else:
+                    print("Invalid input. Please try again.")   
+
+        except:
             print("Your input is invalid. Please try again.")
 
 
@@ -210,4 +234,5 @@ def run_script():
 
 # execution of all steps
 if __name__ == "__main__":
+    
     run_script()
