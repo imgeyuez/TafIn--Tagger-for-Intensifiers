@@ -2,9 +2,8 @@
 #   modules
 #####################################
 
-from _preproc import train_test
+from preprocessing import train_test
 import pycrfsuite
-import numpy as np
 from sklearn.metrics import classification_report
 
 """
@@ -127,63 +126,63 @@ def get_labels(doc):
 # generate the train and test data
 training_data, test_data = train_test()
 
-# list for inputs of train data
-x_train = list()
-for doc in training_data:
-    x_train.append(extract_features(doc))
+def train_tafin(training_data):
+    # list for inputs of train data
+    x_train = list()
+    for doc in training_data:
+        x_train.append(extract_features(doc))
 
-# list for inputs of test data
-x_test = list()
-for doc in test_data:
-    x_test.append(extract_features(doc))
+    # list of labels of train data
+    y_train = [get_labels(doc) for doc in training_data]
 
-# list of labels of train data
-y_train = [get_labels(doc) for doc in training_data]
+    """
+        x_train for one doc/sentence looks like this:
+        [{'bias': 1.0, 'word': 'Es', 'word.islower()': False, 'postag': 'PPER', 'next_token': 'ist', 'next_token.islower()': True, 'next_postag': 'VAFIN'}, 
+        {'bias': 1.0, 'word': 'ist', 'word.islower()': True, 'postag': 'VAFIN', 'prev_token': 'Es', 'prev_postag': 'PPER', 'next_token': 'sau', 'next_token.islower()': True, 'next_postag': 'ITJ'}, 
+        {'bias': 1.0, 'word': 'sau', 'word.islower()': True, 'postag': 'ITJ', 'prev_token': 'ist', 'prev_postag': 'VAFIN', 'next_token': 'kalt', 'next_token.islower()': True, 'next_postag': 'ADJD'}, 
+        {'bias': 1.0, 'word': 'kalt', 'word.islower()': True, 'postag': 'ADJD', 'prev_token': 'sau', 'prev_postag': 'ITJ', 'next_token': '.', 'next_token.islower()': False, 'next_postag': '$.'}, 
+        {'bias': 1.0, 'word': '.', 'word.islower()': False, 'postag': '$.', 'prev_token': 'kalt', 'prev_postag': 'ADJD'}
+        ]]
+    """
 
-# list of labels of test data
-y_test = [get_labels(doc) for doc in test_data]
+    # training the model
+    trainer = pycrfsuite.Trainer(verbose=True)
 
-"""
-    x_train for one doc/sentence looks like this:
-    [{'bias': 1.0, 'word': 'Es', 'word.islower()': False, 'postag': 'PPER', 'next_token': 'ist', 'next_token.islower()': True, 'next_postag': 'VAFIN'}, 
-    {'bias': 1.0, 'word': 'ist', 'word.islower()': True, 'postag': 'VAFIN', 'prev_token': 'Es', 'prev_postag': 'PPER', 'next_token': 'sau', 'next_token.islower()': True, 'next_postag': 'ITJ'}, 
-    {'bias': 1.0, 'word': 'sau', 'word.islower()': True, 'postag': 'ITJ', 'prev_token': 'ist', 'prev_postag': 'VAFIN', 'next_token': 'kalt', 'next_token.islower()': True, 'next_postag': 'ADJD'}, 
-    {'bias': 1.0, 'word': 'kalt', 'word.islower()': True, 'postag': 'ADJD', 'prev_token': 'sau', 'prev_postag': 'ITJ', 'next_token': '.', 'next_token.islower()': False, 'next_postag': '$.'}, 
-    {'bias': 1.0, 'word': '.', 'word.islower()': False, 'postag': '$.', 'prev_token': 'kalt', 'prev_postag': 'ADJD'}
-    ]]
-"""
+    # for each sequence of input and output within the input and output data
+    for xseq, yseq in zip(x_train, y_train):
+        # train the model
+        trainer.append(xseq, yseq)
 
-# training the model
-trainer = pycrfsuite.Trainer(verbose=True)
+    # paramenters of the model
+    trainer.set_params({
+        # coefficient for L1 penalty
+        'c1': 0.5,
 
-# for each sequence of input and output within the input and output data
-for xseq, yseq in zip(x_train, y_train):
-    # train the model
-    trainer.append(xseq, yseq)
+        # coefficient for L2 penalty
+        'c2': 0.01,  
 
-# paramenters of the model
-trainer.set_params({
-    # coefficient for L1 penalty
-    'c1': 0.5,
+        # maximum number of iterations
+        'max_iterations': 200,
 
-    # coefficient for L2 penalty
-    'c2': 0.01,  
-
-    # maximum number of iterations
-    'max_iterations': 200,
-
-    # whether to include transitions that
-    # are possible, but not observed
-    'feature.possible_transitions': True
-    })
+        # whether to include transitions that
+        # are possible, but not observed
+        'feature.possible_transitions': True
+        })
 
 
-# filename as a parameter for the train function
-# trained model will be saved within the file
-trainer.train("crf.model")
+    # filename as a parameter for the train function
+    # trained model will be saved within the file
+    trainer.train("crf.model")
 
-# load and use the trained model
-tagger = pycrfsuite.Tagger()
-tagger.open("crf.model")
-y_pred = [tagger.tag(xseq) for xseq in x_test]
+
+def test_tafin(test_data):
+    # list for inputs of test data
+    x_test = [extract_features(doc) for doc in test_data]
+
+    # load and use the trained model
+    tagger = pycrfsuite.Tagger()
+    tagger.open("crf.model")
+    y_pred = [tagger.tag(xseq) for xseq in x_test]
+
+    return y_pred
 
