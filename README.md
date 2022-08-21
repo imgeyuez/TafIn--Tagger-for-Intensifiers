@@ -5,6 +5,8 @@ As this is the project of my bachelor thesis, there are also baselines within th
 
 The thesis itself might be uploaded after the grading.
 
+TafIn is a first official concrete attempt for an implementation for identification of intensifiers of adjectives, and therefore, it can be used as a basis for further steps or improvements. 
+
 The model was trained and tested on Python 3.10.2.
 
 
