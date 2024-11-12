@@ -137,4 +137,3 @@ If you use this tool or cite this paper, please use the following citation:
   note = {Bachelorarbeit, Ruhr-Universität Bochum},
 }
 
-[![DOI](https://zenodo.org/badge/515194369.svg)](https://doi.org/10.5281/zenodo.14115168)
