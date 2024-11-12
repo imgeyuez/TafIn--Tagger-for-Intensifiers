@@ -124,3 +124,17 @@ Where x_test contains the inputs (token, postag) for every token in every senten
 x_test = [[("Das", "PDS"), ("ist", "VAFIN"), ("ein", "ART"), ("Beispiel", "NN"), (".", "$.")], 
     [(Es, "PPER"), ("sollte", "VMFIN"), (so, "ADV"), ("aussehen", "VVINF"), (".", "$.")]]
 ```
+
+## Citation
+If you use this tool or cite this paper, please use the following citation:
+
+```bibtex
+@misc{yuezuencueoglu2024thesis,
+  author = {Imge Yüzüncüoglu},
+  title = {Tagger für Intensivierer - Ein Versuch der automatischen Identifikation von Intensivierern von Adjektiven },
+  year = {2022},
+  url = {https://doi.org/10.5281/zenodo.14115168},
+  note = {Bachelorarbeit, Ruhr-Universität Bochum},
+}
+
+[![DOI](https://zenodo.org/badge/515194369.svg)](https://doi.org/10.5281/zenodo.14115168)
